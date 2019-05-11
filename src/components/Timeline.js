@@ -9,7 +9,7 @@ export default class Timeline extends Component {
     }
 
     componentDidMount() {
-        get('/public/fotos/vitor')
+        get(`/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`)
             .then(photos => this.setState({photos: photos}));
     }
 
