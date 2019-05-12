@@ -1,11 +1,11 @@
-import {HeaderInfo} from "./Header";
+import {HeaderInfo} from "./PhotoItemHeader";
 
 export class Photo {
     constructor(apiReturn) {
         this._id = apiReturn.id;
         this._comment = apiReturn.comentario;
         this._comments = apiReturn.comentarios;
-        this._likes = apiReturn.likeada;
+        this._hasLike = apiReturn.likeada;
         this._likers = apiReturn.likers;
         this._photoUrl = apiReturn.urlFoto;
         this._userLogin = apiReturn.loginUsuario;
@@ -29,8 +29,8 @@ export class Photo {
         return this._comments;
     }
 
-    get likes() {
-        return this._likes;
+    get hasLike() {
+        return this._hasLike;
     }
 
     get likers() {
