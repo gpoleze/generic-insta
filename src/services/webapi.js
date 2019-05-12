@@ -16,13 +16,14 @@ export function get(service) {
         .then(res => res.json());
 }
 
-export function post(service, data) {
+export function post(service, data, token = null) {
     const requestInfo = {
         method: 'POST',
         mode: "cors",
         body: JSON.stringify(data),
         headers: new Headers({
-            'Content-type': 'application/json'
+            'Content-type': 'application/json',
+            'X-AUTH-TOKEN': token
         })
     };
 
