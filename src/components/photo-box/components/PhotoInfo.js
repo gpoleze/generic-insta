@@ -7,10 +7,15 @@ import {PubSubChannel} from "../../../services/pubsub-channels";
 export default class PhotoInfo extends Component {
     constructor(props) {
         super(props);
-        this.state = {likers: this.props.photo.likers}
+        this.state = {likers: this.props.photo.likers, comments: this.props.photo.comments}
     }
 
     componentWillMount() {
+        this._likeUpdatesHadler();
+        this._commentUpdatesHadler();
+    }
+
+    _likeUpdatesHadler() {
         PubSub.subscribe(PubSubChannel.LIKES_UPDATES, (topic, message) => {
 
             if (this.props.photo.id !== message.photoId)
@@ -29,9 +34,21 @@ export default class PhotoInfo extends Component {
         })
     }
 
+    _commentUpdatesHadler(){
+        PubSub.subscribe(PubSubChannel.NEW_COMMENT_UPDATES, (topic, message) =>{
+            if (this.props.photo.id !== message.photoId)
+                return;
+
+            console.log(topic);
+            console.log(message.comment);
+
+            this.setState({comments:this.state.comments.concat(message.comment)})
+        })
+    }
+
     render() {
         const {photo} = this.props;
-        const {comment, comments} = photo;
+        const {comment} = photo;
         const likers = [].concat(this.state.likers);
         const lastLiker = likers.pop();
 
@@ -67,11 +84,11 @@ export default class PhotoInfo extends Component {
 
                 <ul className="foto-info-comentarios">
                     {
-                        comments.map(comment =>
+                        this.state.comments.map(comment =>
                             <li key={comment.id} className="comentario">
                                 <Link className="foto-info-autor"
                                       to={`/timeline/${comment.login}`}>{comment.login}</Link>
-                                {comment.texto}
+                                {` ${comment.texto}`}
                             </li>
                         )
                     }

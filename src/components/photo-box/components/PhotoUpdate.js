@@ -16,7 +16,7 @@ export default class PhotoUpdates extends Component {
         return !!likers.find(liker => liker.login === decoded.sub);
     }
 
-    like(event) {
+    _like(event) {
 
         event.preventDefault();
 
@@ -35,14 +35,43 @@ export default class PhotoUpdates extends Component {
             });
     }
 
+    _comment(event) {
+        event.preventDefault();
+
+        const {id} = this.props.photo;
+
+        post(
+            `/fotos/${id}/comment`,
+            {texto: this.commentInput.value},
+            localStorage.getItem('auth-token')
+        )
+            .then(res => res.text())
+            .then(JSON.parse)
+            .then(comment => PubSub.publish(PubSubChannel.NEW_COMMENT_UPDATES, {photoId: id, comment}));
+
+        this.commentInput.value = '';
+
+    }
+
+
     render() {
         return (
             <section className="fotoAtualizacoes">
-                <a onClick={(e) => this.like(e)}
-                   className={this.state.hasLoggedInUserLiked ? "fotoAtualizacoes-like-ativo" : "fotoAtualizacoes-like"}>Like</a>
+                <a onClick={(e) => this._like(e)}
+                   className={this.state.hasLoggedInUserLiked ? "fotoAtualizacoes-like-ativo" : "fotoAtualizacoes-like"}>
+                    Like
+                </a>
                 <form className="fotoAtualizacoes-form">
-                    <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo"/>
-                    <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit"/>
+                    <input type="text"
+                           placeholder="Adicione um comentário..."
+                           className="fotoAtualizacoes-form-campo"
+                           ref={input => this.commentInput = input}
+                    />
+                    <input type="submit"
+                           value="Comentar!"
+                           className="fotoAtualizacoes-form-submit"
+                           onClick={this._comment.bind(this)}
+                    />
                 </form>
 
             </section>
