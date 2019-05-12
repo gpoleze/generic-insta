@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Photo} from "./Photo";
+import {Link} from "react-router-dom";
 
 class PhotoUpdates extends Component {
     render() {
@@ -18,10 +19,7 @@ class PhotoUpdates extends Component {
 
 class PhotoInfo extends Component {
     render() {
-        const likers = this.props.likers;
-        const comment = this.props.comment;
-        const comments = this.props.comments;
-        const author = this.props.author;
+        const {likers, comment, comments, author} = this.props;
         return (
             <div className="foto-in fo">
                 <div className="foto-info-likes">
@@ -29,9 +27,9 @@ class PhotoInfo extends Component {
                     {
                         likers.map(liker =>
                             <div>
-                                <a key={liker.id} href="#">
+                                <Link key={liker.id} to={`/timeline/${liker.nome}`}>
                                     {liker.nome}
-                                </a>
+                                </Link>
                                 {likers.size > 0 ? <span> ,</span> : <span></span>}
                             </div>
                         )
@@ -42,7 +40,7 @@ class PhotoInfo extends Component {
                 </div>
 
                 <p className="foto-info-legenda">
-                    <a className="foto-info-autor">{author} </a>
+                    <Link to={`/timeline/${author}`} className="foto-info-autor">{author} </Link>
                     {comment}
                 </p>
 
@@ -50,7 +48,7 @@ class PhotoInfo extends Component {
                     {
                         comments.map(comment =>
                             <li key={comment.id} className="comentario">
-                                <a className="foto-info-autor">{comment.login} </a>
+                                <Link className="foto-info-autor">{comment.login} to={`/timeline/${comment.login}`}</Link>
                                 {comment.texto}
                             </li>
                         )
@@ -63,16 +61,16 @@ class PhotoInfo extends Component {
 
 class PhotoHeader extends Component {
     render() {
-        const info = this.props.info;
+        const {info} = this.props;
 
         return (
             <header className="foto-header">
                 <figure className="foto-usuario">
                     <img src={info.profilePhotoUrl} alt="foto do usuario"/>
                     <figcaption className="foto-usuario">
-                        <a href="#">
+                        <Link to={`/timeline/${info.userLogin}`}>
                             {info.userLogin}
-                        </a>
+                        </Link>
                     </figcaption>
                 </figure>
                 <time className="foto-data">{info.date}</time>
