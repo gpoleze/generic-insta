@@ -26,7 +26,7 @@ ReactDOM.render((
         <Switch>
             <Route exact path='/' component={Login}/>
             <Route path='/timeline/:login?' render={navigateToTimeline}/>
-            <Route path='/logout' component={Logout} render={(next) => <Redirect to='/'/>}/>
+            <Route path='/logout' component={Logout}/>
         </Switch>
     </BrowserRouter>
 ), document.getElementById('root'));
