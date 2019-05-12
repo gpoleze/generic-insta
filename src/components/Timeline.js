@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import PhotoItem from './PhotoItem';
+import PhotoItem from './photo-box/components/PhotoItem';
 import {get} from '../services/webapi'
 
 export default class Timeline extends Component {
