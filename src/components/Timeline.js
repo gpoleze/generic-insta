@@ -1,6 +1,11 @@
 import React, {Component} from 'react';
+import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
+
+import PubSub from 'pubsub-js';
+
 import PhotoItem from './photo-box/components/PhotoItem';
 import {get} from '../services/webapi'
+import {PubSubChannel} from "../services/pubsub-channels";
 
 export default class Timeline extends Component {
     constructor(props) {
@@ -13,8 +18,14 @@ export default class Timeline extends Component {
         this.loadPhotos(this.props);
     }
 
+    componentWillMount() {
+        PubSub.subscribe(PubSubChannel.TIMELINE, (topic, message) => {
+            this.setState({photos: message.photos});
+        })
+    }
+
     componentWillReceiveProps(nextProps, nextContext) {
-        if (this.login !== nextProps.login){
+        if (this.login !== nextProps.login) {
             this.login = nextProps.login;
             this.loadPhotos();
         }
@@ -30,9 +41,14 @@ export default class Timeline extends Component {
     render() {
         return (
             <div className="fotos container">
-                {
-                    this.state.photos.map(photo => <PhotoItem key={photo.id} photo={photo}/>)
-                }
+                <ReactCSSTransitionGroup
+                    transitionName="timeline"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={300}>
+                    {
+                        this.state.photos.map(photo => <PhotoItem key={photo.id} photo={photo}/>)
+                    }
+                </ReactCSSTransitionGroup>
             </div>
         );
     }
