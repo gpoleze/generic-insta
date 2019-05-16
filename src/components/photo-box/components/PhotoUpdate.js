@@ -37,20 +37,7 @@ export default class PhotoUpdates extends Component {
 
     _comment(event) {
         event.preventDefault();
-
-        const {id} = this.props.photo;
-
-        post(
-            `/fotos/${id}/comment`,
-            {texto: this.commentInput.value},
-            localStorage.getItem('auth-token')
-        )
-            .then(res => res.text())
-            .then(JSON.parse)
-            .then(comment => PubSub.publish(PubSubChannel.NEW_COMMENT_UPDATES, {photoId: id, comment}));
-
-        this.commentInput.value = '';
-
+        this.props.commentAction(this.props.photo.id, this.commentInput);
     }
 
 

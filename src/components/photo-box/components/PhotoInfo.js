@@ -7,12 +7,11 @@ import {PubSubChannel} from "../../../services/pubsub-channels";
 export default class PhotoInfo extends Component {
     constructor(props) {
         super(props);
-        this.state = {likers: this.props.photo.likers, comments: this.props.photo.comments}
+        this.state = {likers: this.props.photo.likers}
     }
 
     componentWillMount() {
         this._likeUpdatesHadler();
-        this._commentUpdatesHadler();
     }
 
     _likeUpdatesHadler() {
@@ -31,18 +30,6 @@ export default class PhotoInfo extends Component {
 
             this.setState({likers: newLikers});
 
-        })
-    }
-
-    _commentUpdatesHadler(){
-        PubSub.subscribe(PubSubChannel.NEW_COMMENT_UPDATES, (topic, message) =>{
-            if (this.props.photo.id !== message.photoId)
-                return;
-
-            console.log(topic);
-            console.log(message.comment);
-
-            this.setState({comments:this.state.comments.concat(message.comment)})
         })
     }
 
@@ -84,7 +71,7 @@ export default class PhotoInfo extends Component {
 
                 <ul className="foto-info-comentarios">
                     {
-                        this.state.comments.map(comment =>
+                        photo.comments.map(comment =>
                             <li key={comment.id} className="comentario">
                                 <Link className="foto-info-autor"
                                       to={`/timeline/${comment.login}`}>{comment.login}</Link>
