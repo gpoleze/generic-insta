@@ -18,6 +18,7 @@ export default class Timeline extends Component {
         this.loadPhotos(this.props);
         this._timelineUpdateHandler();
         this._commentUpdatesHadler();
+        this._likeUpdateHandler();
     }
 
     _timelineUpdateHandler = () => {
@@ -45,6 +46,23 @@ export default class Timeline extends Component {
             const targetedPhoto = this.state.photos.find(photo => photo.id === message.photoId);
             targetedPhoto.comentarios.push(message.comment);
             this.setState({photos: this.state.photos});
+        })
+    };
+
+    _likeUpdateHandler = () => {
+        PubSub.subscribe(PubSubChannel.LIKES_UPDATES, (topic, message) => {
+            console.log(this.state.photos[1].likers);
+            const targetedPhoto = this.state.photos.find(photo => photo.id === message.photoId);
+
+            const hasLiker = !!targetedPhoto.likers.find(liker => liker.login === message.liker.login);
+
+            if (hasLiker)
+                targetedPhoto.likers = targetedPhoto.likers.filter(liker => liker.login !== message.liker.login);
+            else
+                targetedPhoto.likers.push(message.liker);
+
+            this.setState({photos: this.state.photos});
+            console.log(this.state.photos[1].likers);
         })
     };
 

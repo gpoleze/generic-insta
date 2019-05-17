@@ -1,42 +1,9 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
-import PubSub from "pubsub-js";
-
-import {PubSubChannel} from "../../../services/pubsub-channels";
 
 export default class PhotoInfo extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {likers: this.props.photo.likers}
-    }
-
-    componentWillMount() {
-        this._likeUpdatesHadler();
-    }
-
-    _likeUpdatesHadler() {
-        PubSub.subscribe(PubSubChannel.LIKES_UPDATES, (topic, message) => {
-
-            if (this.props.photo.id !== message.photoId)
-                return;
-
-            const isIn = this.state.likers.find(liker => liker.login === message.liker.login);
-
-            let newLikers;
-            if (isIn)
-                newLikers = this.state.likers.filter(liker => liker.login !== message.liker.login);
-            else
-                newLikers = this.state.likers.concat(message.liker);
-
-            this.setState({likers: newLikers});
-
-        })
-    }
-
     render() {
-        const {photo} = this.props;
-        const {comment} = photo;
-        const likers = [].concat(this.state.likers);
+        const likers = [].concat(this.props.photo.likers);
         const lastLiker = likers.pop();
 
         return (
@@ -60,18 +27,18 @@ export default class PhotoInfo extends Component {
                                 </Link>
                             </span>) : null
                     }
-                    <span> {this.state.likers.length > 0 ? "liked" : "no likes"}</span>
+                    <span> {this.props.photo.likers.length > 0 ? "liked" : "no likes"}</span>
 
                 </div>
 
                 <p className="foto-info-legenda">
-                    <Link to={`/timeline/${photo.userLogin}`} className="foto-info-autor">{photo.userLogin} </Link>
-                    {comment}
+                    <Link to={`/timeline/${this.props.photo.userLogin}`} className="foto-info-autor">{this.props.photo.userLogin} </Link>
+                    {this.props.photo.comment}
                 </p>
 
                 <ul className="foto-info-comentarios">
                     {
-                        photo.comments.map(comment =>
+                        this.props.photo.comments.map(comment =>
                             <li key={comment.id} className="comentario">
                                 <Link className="foto-info-autor"
                                       to={`/timeline/${comment.login}`}>{comment.login}</Link>
