@@ -1,4 +1,6 @@
 // const API = 'https://instalura-api.herokuapp.com/api';
+import jwt_decode from "jwt-decode";
+
 const API = 'http://localhost:8080/api';
 
 const handleError = res => {
@@ -32,3 +34,13 @@ export function post(service, data, token = null) {
 }
 
 
+export function isUserLogedin(user) {
+    if (!!user && user.trim() === "")
+        return false;
+
+    return user === loggedInUser();
+}
+
+function loggedInUser() {
+    return jwt_decode(localStorage.getItem('auth-token')).sub;
+}
