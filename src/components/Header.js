@@ -1,15 +1,18 @@
 import React, {Component} from 'react';
-import {get} from "../services/webapi";
-import PubSub from 'pubsub-js';
-import {PubSubChannel} from "../services/pubsub-channels";
 
 export default class Header extends Component {
 
     _search(event) {
         event.preventDefault();
 
-        get(`/public/fotos/${this._searchInput.value}`)
-            .then(photos => PubSub.publish(PubSubChannel.TIMELINE, {photos}));
+        const inputValue = this._searchInput.value.trim();
+
+        if (!inputValue){
+            this._searchInput.value = "";
+            return;
+        }
+
+        this.props.timelineLogic.listPhotos(`/public/fotos/${inputValue}`);
     }
 
     render() {
