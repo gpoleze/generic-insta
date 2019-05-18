@@ -30,4 +30,21 @@ export default class TimelineLogic {
                 PubSub.publish(PubSubChannel.TIMELINE, {photos: this.photos});
             });
     };
+
+    comment(id, commentInput) {
+        post(
+            `/fotos/${id}/comment`,
+            {texto: commentInput.value},
+            localStorage.getItem('auth-token')
+        )
+            .then(res => res.text())
+            .then(JSON.parse)
+            .then(comment => {
+                const targetedPhoto = this.photos.find(photo => photo.id === id);
+                targetedPhoto.comentarios.push(comment);
+                PubSub.publish(PubSubChannel.TIMELINE, {photos: this.photos});
+            });
+
+        commentInput.value = '';
+    };
 }

@@ -5,7 +5,7 @@ import PubSub from 'pubsub-js';
 import {PubSubChannel} from "../services/pubsub-channels";
 
 import PhotoItem from './photo-box/components/PhotoItem';
-import {get, post, isUserLogedin} from '../services/webapi';
+import {get, isUserLogedin} from '../services/webapi';
 import TimelineLogic from "./logic/TimelineLogic";
 
 
@@ -20,7 +20,6 @@ export default class Timeline extends Component {
     componentDidMount() {
         this.loadPhotos(this.props);
         this._timelineUpdateHandler();
-        this._commentUpdatesHadler();
     }
 
     _timelineUpdateHandler = () => {
@@ -50,30 +49,6 @@ export default class Timeline extends Component {
             });
     }
 
-    _commentUpdatesHadler = () => {
-        PubSub.subscribe(PubSubChannel.NEW_COMMENT_UPDATES, (topic, message) => {
-            const targetedPhoto = this.state.photos.find(photo => photo.id === message.photoId);
-            targetedPhoto.comentarios.push(message.comment);
-            this.setState({photos: this.state.photos});
-        })
-    };
-
-    _commentAction = (id, commentInput) => {
-        post(
-            `/fotos/${id}/comment`,
-            {texto: commentInput.value},
-            localStorage.getItem('auth-token')
-        )
-            .then(res => res.text())
-            .then(JSON.parse)
-            .then(comment => PubSub.publish(PubSubChannel.NEW_COMMENT_UPDATES, {photoId: id, comment}));
-
-        commentInput.value = '';
-    };
-
-    like(id) {
-        this.timelineLogic.like(id);
-    };
 
     render() {
         return (
@@ -87,8 +62,8 @@ export default class Timeline extends Component {
                             <PhotoItem
                                 key={photo.id}
                                 photo={photo}
-                                commentAction={this._commentAction}
-                                likeAction={this.like.bind(this)}
+                                commentAction={(id, commentInput) => this.timelineLogic.comment(id, commentInput)}
+                                likeAction={(id) => this.timelineLogic.like(id)}
                             />)
                     }
                 </ReactCSSTransitionGroup>
