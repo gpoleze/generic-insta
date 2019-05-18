@@ -2,23 +2,25 @@ import React, {Component} from 'react';
 import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
 
 import PubSub from 'pubsub-js';
+import {PubSubChannel} from "../services/pubsub-channels";
 
 import PhotoItem from './photo-box/components/PhotoItem';
-import {get, post, isUserLogedin} from '../services/webapi'
-import {PubSubChannel} from "../services/pubsub-channels";
+import {get, post, isUserLogedin} from '../services/webapi';
+import TimelineLogic from "./logic/TimelineLogic";
+
 
 export default class Timeline extends Component {
     constructor(props) {
         super(props);
         this.state = {photos: []};
         this.login = this.props.login;
+        this.timelineLogic = new TimelineLogic([]);
     }
 
     componentDidMount() {
         this.loadPhotos(this.props);
         this._timelineUpdateHandler();
         this._commentUpdatesHadler();
-        this._likeUpdateHandler();
     }
 
     _timelineUpdateHandler = () => {
@@ -42,7 +44,10 @@ export default class Timeline extends Component {
                 photo.hasLikeByLoggedInUser = isUserLogedin(photo.loginUsuario);
                 return photo;
             }))
-            .then(photos => this.setState({photos: photos}));
+            .then(photos => {
+                this.setState({photos: photos});
+                this.timelineLogic = new TimelineLogic(photos)
+            });
     }
 
     _commentUpdatesHadler = () => {
@@ -50,23 +55,6 @@ export default class Timeline extends Component {
             const targetedPhoto = this.state.photos.find(photo => photo.id === message.photoId);
             targetedPhoto.comentarios.push(message.comment);
             this.setState({photos: this.state.photos});
-        })
-    };
-
-    _likeUpdateHandler = () => {
-        PubSub.subscribe(PubSubChannel.LIKES_UPDATES, (topic, message) => {
-            const targetedPhoto = this.state.photos.find(photo => photo.id === message.photoId);
-
-            const hasLiker = !!targetedPhoto.likers.find(liker => liker.login === message.liker.login);
-
-            if (hasLiker)
-                targetedPhoto.likers = targetedPhoto.likers.filter(liker => liker.login !== message.liker.login);
-            else
-                targetedPhoto.likers.push(message.liker);
-
-            targetedPhoto.hasLikeByLoggedInUser = !targetedPhoto.hasLikeByLoggedInUser;
-            this.setState({photos: this.state.photos});
-            console.log(this.state.photos);
         })
     };
 
@@ -83,17 +71,8 @@ export default class Timeline extends Component {
         commentInput.value = '';
     };
 
-    _likeAction = (id) => {
-        post(
-            `/fotos/${id}/like`,
-            {},
-            localStorage.getItem('auth-token')
-        )
-            .then(res => res.text())
-            .then(JSON.parse)
-            .then(liker => {
-                PubSub.publish(PubSubChannel.LIKES_UPDATES, {photoId: id, liker})
-            });
+    like(id) {
+        this.timelineLogic.like(id);
     };
 
     render() {
@@ -109,7 +88,7 @@ export default class Timeline extends Component {
                                 key={photo.id}
                                 photo={photo}
                                 commentAction={this._commentAction}
-                                likeAction={this._likeAction}
+                                likeAction={this.like.bind(this)}
                             />)
                     }
                 </ReactCSSTransitionGroup>
