@@ -1,15 +1,11 @@
 import React, {Component} from 'react';
 import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
 
-import PubSub from 'pubsub-js';
-import {PubSubChannel} from "../services/pubsub-channels";
-
 import PhotoItem from './photo-box/components/PhotoItem';
-import {get, isUserLogedin} from '../services/webapi';
 import TimelineLogic from "./logic/TimelineLogic";
 
-
 export default class Timeline extends Component {
+
     constructor(props) {
         super(props);
         this.state = {photos: []};
@@ -18,15 +14,9 @@ export default class Timeline extends Component {
     }
 
     componentDidMount() {
-        this.loadPhotos(this.props);
-        this._timelineUpdateHandler();
+        this.loadPhotos();
+        this.timelineLogic.subscribe(photos => this.setState({photos}));
     }
-
-    _timelineUpdateHandler = () => {
-        PubSub.subscribe(PubSubChannel.TIMELINE, (topic, message) => {
-            this.setState({photos: message.photos});
-        });
-    };
 
     componentWillReceiveProps(nextProps, nextContext) {
         if (this.login !== nextProps.login) {
@@ -38,17 +28,9 @@ export default class Timeline extends Component {
     loadPhotos() {
         const login = this.login;
         const url = !!login ? `/public/fotos/${login}` : `/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
-        get(url)
-            .then(photos => photos.map(photo => {
-                photo.hasLikeByLoggedInUser = isUserLogedin(photo.loginUsuario);
-                return photo;
-            }))
-            .then(photos => {
-                this.setState({photos: photos});
-                this.timelineLogic = new TimelineLogic(photos)
-            });
-    }
 
+        this.timelineLogic.listPhotos(url);
+    }
 
     render() {
         return (

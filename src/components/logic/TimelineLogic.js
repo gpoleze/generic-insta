@@ -1,4 +1,4 @@
-import {post} from "../../services/webapi";
+import {get, isUserLogedin, post} from "../../services/webapi";
 import PubSub from "pubsub-js";
 import {PubSubChannel} from "../../services/pubsub-channels";
 
@@ -27,7 +27,7 @@ export default class TimelineLogic {
 
                 targetedPhoto.hasLikeByLoggedInUser = !targetedPhoto.hasLikeByLoggedInUser;
 
-                PubSub.publish(PubSubChannel.TIMELINE, {photos: this.photos});
+                this.publish({photos: this.photos});
             });
     };
 
@@ -42,9 +42,30 @@ export default class TimelineLogic {
             .then(comment => {
                 const targetedPhoto = this.photos.find(photo => photo.id === id);
                 targetedPhoto.comentarios.push(comment);
-                PubSub.publish(PubSubChannel.TIMELINE, {photos: this.photos});
+                this.publish({photos: this.photos});
             });
 
         commentInput.value = '';
     };
+
+    publish(data) {
+        PubSub.publish(PubSubChannel.TIMELINE, data);
+    }
+
+    subscribe(callback) {
+        PubSub.subscribe(PubSubChannel.TIMELINE, (topic, message) => callback(message.photos));
+    }
+
+    listPhotos(url) {
+        get(url)
+            .then(photos => photos.map(photo => {
+                const loggedInUser = isUserLogedin(photo.loginUsuario);
+                photo.hasLikeByLoggedInUser = photo.likers.includes(loggedInUser);
+                return photo;
+            }))
+            .then(photos => {
+                this.photos = photos;
+                this.publish({photos});
+            });
+    }
 }
