@@ -7,12 +7,11 @@ export default class Header extends Component {
 
         const inputValue = this._searchInput.value.trim();
 
-        if (!inputValue){
-            this._searchInput.value = "";
-            return;
+        if (inputValue) {
+            this.props.store.listPhotos(`/public/fotos/${inputValue}`);
         }
 
-        this.props.timelineLogic.listPhotos(`/public/fotos/${inputValue}`);
+        this._searchInput.value = "";
     }
 
     render() {

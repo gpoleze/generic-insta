@@ -2,7 +2,7 @@ import {get, isUserLogedin, post} from "../../services/webapi";
 import PubSub from "pubsub-js";
 import {PubSubChannel} from "../../services/pubsub-channels";
 
-export default class TimelineLogic {
+export default class TimelineStore {
     constructor(photos) {
         this.photos = photos;
     }

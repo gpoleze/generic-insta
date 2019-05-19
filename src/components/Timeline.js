@@ -13,7 +13,7 @@ export default class Timeline extends Component {
 
     componentDidMount() {
         this.loadPhotos();
-        this.props.timelineLogic.subscribe(photos => this.setState({photos}));
+        this.props.store.subscribe(photos => this.setState({photos}));
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -27,7 +27,7 @@ export default class Timeline extends Component {
         const login = this.login;
         const url = !!login ? `/public/fotos/${login}` : `/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
 
-        this.props.timelineLogic.listPhotos(url);
+        this.props.store.listPhotos(url);
     }
 
     render() {
@@ -42,8 +42,8 @@ export default class Timeline extends Component {
                             <PhotoItem
                                 key={photo.id}
                                 photo={photo}
-                                commentAction={(id, commentInput) => this.props.timelineLogic.comment(id, commentInput)}
-                                likeAction={id => this.props.timelineLogic.like(id)}
+                                commentAction={(id, commentInput) => this.props.store.comment(id, commentInput)}
+                                likeAction={id => this.props.store.like(id)}
                             />)
                     }
                 </ReactCSSTransitionGroup>
