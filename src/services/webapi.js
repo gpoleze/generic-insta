@@ -38,9 +38,11 @@ export function isUserLogedin(user) {
     if (!!user && user.trim() === "")
         return false;
 
-    return user === loggedInUser();
+    const loggedInUser1 = loggedInUser();
+    console.log(loggedInUser1);
+    return user === loggedInUser1;
 }
 
-function loggedInUser() {
+export function loggedInUser() {
     return jwt_decode(localStorage.getItem('auth-token')).sub;
 }

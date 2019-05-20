@@ -15,7 +15,7 @@ export default class PhotoUpdates extends Component {
         return (
             <section className="fotoAtualizacoes">
                 <a onClick={(e) => this._like(e)}
-                   className={this.props.photo.hasLikeByLoggedInUser ? "fotoAtualizacoes-like" : "fotoAtualizacoes-like-ativo"}>
+                   className={this.props.photo.hasLikeByLoggedInUser ? "fotoAtualizacoes-like-ativo" : "fotoAtualizacoes-like"}>
                     Like
                 </a>
                 <form className="fotoAtualizacoes-form">

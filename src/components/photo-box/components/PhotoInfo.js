@@ -3,7 +3,8 @@ import {Link} from "react-router-dom";
 
 export default class PhotoInfo extends Component {
     render() {
-        const likers = [].concat(this.props.photo.likers);
+        const {photo} = this.props;
+        const likers = [].concat(photo.likers);
         const lastLiker = likers.pop();
 
         return (
@@ -12,37 +13,37 @@ export default class PhotoInfo extends Component {
 
                     {
                         likers.map(liker =>
-                            <span key={`${this.props.photo.id}_${liker.login}`}>
-                                <Link to={`/timeline/${liker.login}`}>
-                                    {`${liker.login}, `}
+                            <span key={`${photo.id}_${liker.userLogin}`}>
+                                <Link to={`/timeline/${liker.userLogin}`}>
+                                    {`${liker.userLogin}, `}
                                 </Link>
                             </span>
                         )
                     }
                     {
                         lastLiker ? (
-                            <span key={`${this.props.photo.id}_${lastLiker.login}`}>
-                                <Link to={`/timeline/${lastLiker.login}`}>
-                                    {`${lastLiker.login} `}
+                            <span key={`${photo.id}_${lastLiker.userLogin}`}>
+                                <Link to={`/timeline/${lastLiker.userLogin}`}>
+                                    {`${lastLiker.userLogin} `}
                                 </Link>
                             </span>) : null
                     }
-                    <span> {this.props.photo.likers.length > 0 ? "liked" : "no likes"}</span>
+                    <span> {photo.likers.length > 0 ? "liked" : "no likes"}</span>
 
                 </div>
 
                 <p className="foto-info-legenda">
-                    <Link to={`/timeline/${this.props.photo.userLogin}`} className="foto-info-autor">{this.props.photo.userLogin} </Link>
-                    {this.props.photo.comment}
+                    <Link to={`/timeline/${photo.userLogin}`} className="foto-info-autor">{photo.userLogin} </Link>
+                    {photo.comment}
                 </p>
 
                 <ul className="foto-info-comentarios">
                     {
-                        this.props.photo.comments.map(comment =>
+                        photo.comments.map(comment =>
                             <li key={comment.id} className="comentario">
                                 <Link className="foto-info-autor"
-                                      to={`/timeline/${comment.login}`}>{comment.login}</Link>
-                                {` ${comment.texto}`}
+                                      to={`/timeline/${comment.userLogin}`}>{comment.userLogin}</Link>
+                                {` ${comment.text}`}
                             </li>
                         )
                     }
