@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
 
 import PhotoItem from './photo-box/components/PhotoItem';
+import TimelineAPI from "./logic/TimelineAPI";
 
 export default class Timeline extends Component {
 
@@ -13,7 +14,10 @@ export default class Timeline extends Component {
 
     componentDidMount() {
         this.loadPhotos();
-        this.props.store.subscribe(photos => this.setState({photos}));
+    }
+
+    componentWillMount() {
+        this.props.store.subscribe(() => this.setState({photos: this.props.store.getState()}));
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -27,10 +31,11 @@ export default class Timeline extends Component {
         const login = this.login;
         const url = !!login ? `/public/fotos/${login}` : `/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
 
-        this.props.store.listPhotos(url);
+        this.props.store.dispatch(TimelineAPI.listPhotos(url));
     }
 
     render() {
+        console.log(this.props.store);
         return (
             <div className="fotos container">
                 <ReactCSSTransitionGroup
@@ -42,8 +47,8 @@ export default class Timeline extends Component {
                             <PhotoItem
                                 key={photo.id}
                                 photo={photo}
-                                commentAction={(id, commentInput) => this.props.store.comment(id, commentInput)}
-                                likeAction={id => this.props.store.like(id)}
+                                commentAction={(id, commentInput) => this.props.store.dispatch(TimelineAPI.comment(id, commentInput))}
+                                likeAction={id => this.props.store.dispatch(TimelineAPI.like(id))}
                             />)
                     }
                 </ReactCSSTransitionGroup>

@@ -4,9 +4,10 @@ import {PubSubChannel} from "../../services/pubsub-channels";
 import {Photo} from "../photo-box/Photo";
 import {Liker} from "../photo-box/Liker";
 import {Comment} from "../photo-box/Comment";
+import {ActionType} from "../../reducers/timeline";
 
-export default class TimelineStore {
-    constructor(photos) {
+export default class TimelineAPI {
+    constructor(photos = []) {
         this.photos = photos;
     }
 
@@ -45,28 +46,36 @@ export default class TimelineStore {
             .then(JSON.parse)
             .then(comment => new Comment(comment.id, comment.login, comment.texto))
             .then(comment => {
-                const targetedPhoto = this.photos.find(photo => photo.id === id);
-                targetedPhoto.comments.push(comment);
-                this.publish({photos: this.photos});
+
             });
 
         commentInput.value = '';
     };
 
-    publish(data) {
+    DEPRECATED_publish(data) {
         PubSub.publish(PubSubChannel.TIMELINE, data);
     }
 
-    subscribe(callback) {
+    static subscribe(callback) {
         PubSub.subscribe(PubSubChannel.TIMELINE, (topic, message) => callback(message.photos));
     }
 
-    listPhotos(url) {
-        get(url)
-            .then(photos => photos.map(photo => new Photo(photo)))
-            .then(photos => {
-                this.photos = photos;
-                this.publish({photos});
-            });
+    /**
+     * @param url {string}
+     * @returns {Function}
+     */
+    static listPhotos(url) {
+        return dispatch => {
+            get(url)
+                .then(photos => photos.map(photo => new Photo(photo)))
+                .then(photos => {
+                    dispatch({type: ActionType.LIST, photos});
+                    return photos;
+                })
+        }
+    }
+
+    static _publish(data, store) {
+        store.dispatch({type: ActionType.LIST, data})
     }
 }
