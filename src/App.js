@@ -1,13 +1,9 @@
 import React, {Component} from 'react';
 import Header from './components/Header';
 import Timeline from './components/Timeline';
-import TimelineAPI from "./components/logic/TimelineAPI";
 import {applyMiddleware, createStore} from "redux";
 import thunk from "redux-thunk";
 import {timeline} from "./reducers/timeline";
-
-
-const timelineStore = new TimelineAPI([]);
 
 const store = createStore(timeline, applyMiddleware(thunk));
 

@@ -35,7 +35,6 @@ export default class Timeline extends Component {
     }
 
     render() {
-        console.log(this.props.store);
         return (
             <div className="fotos container">
                 <ReactCSSTransitionGroup
