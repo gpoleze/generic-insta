@@ -1,12 +1,6 @@
 import {List} from "immutable";
 import {Photo} from "../components/photo-box/Photo";
-
-
-export const ActionType = {
-    LIST: "LIST",
-    COMMENT: 'COMMENT',
-    LIKE: 'LIKE'
-};
+import {ActionType} from "../actions/ActionType";
 
 const changePhoto = (photos, id, updateCallback) => {
     const oldPhotoState = photos.find(photo => photo.id === id);

@@ -2,7 +2,8 @@ import {get, post} from "../../services/webapi";
 import {Photo} from "../photo-box/Photo";
 import {Liker} from "../photo-box/Liker";
 import {Comment} from "../photo-box/Comment";
-import {ActionType} from "../../reducers/timeline";
+import {commentAction, likeAction, listAction} from "../../actions/actionCreator";
+
 
 export default class TimelineAPI {
 
@@ -22,7 +23,7 @@ export default class TimelineAPI {
                 .then(JSON.parse)
                 .then(liker => new Liker(liker.login))
                 .then(liker => {
-                    dispatch({type: ActionType.LIKE, id, liker});
+                    dispatch(likeAction(id, liker));
                     return liker;
                 });
         }
@@ -45,7 +46,7 @@ export default class TimelineAPI {
                 .then(JSON.parse)
                 .then(comment => new Comment(comment.id, comment.login, comment.texto))
                 .then(comment => {
-                    dispatch({type: ActionType.COMMENT, id, comment});
+                    dispatch(commentAction(id, comment));
                     return comment;
                 });
 
@@ -62,7 +63,7 @@ export default class TimelineAPI {
             get(url)
                 .then(photos => photos.map(photo => new Photo(photo)))
                 .then(photos => {
-                    dispatch({type: ActionType.LIST, photos});
+                    dispatch(listAction(photos));
                     return photos;
                 })
         }
