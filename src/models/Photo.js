@@ -1,7 +1,7 @@
 import {HeaderInfo} from "./PhotoItemHeader";
 import {Liker} from "./Liker";
 import {Comment} from "./Comment";
-import {loggedInUser} from "../../services/webapi";
+import {loggedInUser} from "../services/webapi";
 
 export class Photo {
     constructor(apiReturn) {

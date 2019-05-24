@@ -1,5 +1,6 @@
 export const ActionType = {
     LIST: "LIST",
     COMMENT: 'COMMENT',
-    LIKE: 'LIKE'
+    LIKE: 'LIKE',
+    ALERT: 'ALERT'
 };

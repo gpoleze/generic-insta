@@ -1,8 +1,8 @@
 import {get, post} from "../../services/webapi";
-import {Photo} from "../photo-box/Photo";
-import {Liker} from "../photo-box/Liker";
-import {Comment} from "../photo-box/Comment";
-import {commentAction, likeAction, listAction} from "../../actions/actionCreator";
+import {Photo} from "../../models/Photo";
+import {Liker} from "../../models/Liker";
+import {Comment} from "../../models/Comment";
+import {alertAction, commentAction, likeAction, listAction} from "../../actions/actionCreator";
 
 
 export default class TimelineAPI {
@@ -67,5 +67,23 @@ export default class TimelineAPI {
                     return photos;
                 })
         }
+    }
+
+
+    static search(userLogin) {
+        return dispatch => {
+            get(`/public/fotos/${userLogin}`)
+                .then(photos => photos.map(photo => new Photo(photo)))
+                .then(photos => {
+                    const msg = !photos.length ? `User ${userLogin} not found` : '';
+                    console.log(photos);
+
+                    dispatch(alertAction(msg));
+                    // dispatch(listAction(photos));
+
+
+                    return photos
+                })
+        };
     }
 }

@@ -245,3 +245,10 @@
           opacity: 0.01;
           transition: opacity 300ms ease-in;
       }
+
+      /*****/
+
+      .input-error {
+          box-shadow: 0 0 3px #CC0000;
+          padding-left: 10px;
+      }

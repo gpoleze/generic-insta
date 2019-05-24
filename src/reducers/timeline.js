@@ -1,5 +1,5 @@
 import {List} from "immutable";
-import {Photo} from "../components/photo-box/Photo";
+import {Photo} from "../models/Photo";
 import {ActionType} from "../actions/ActionType";
 
 const changePhoto = (photos, id, updateCallback) => {

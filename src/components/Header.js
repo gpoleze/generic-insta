@@ -1,15 +1,29 @@
 import React, {Component} from 'react';
+import TimelineAPI from "./logic/TimelineAPI";
 
 export default class Header extends Component {
+
+    constructor() {
+        super();
+        this.state = {errorMessage: ''};
+    }
+
+    componentDidMount() {
+        this.props.store.subscribe(() =>{
+            console.log(this.props.store.getState());
+            this.setState({errorMessage: this.props.store.getState().header});
+
+            this._searchInput.focus();
+        });
+    }
 
     _search(event) {
         event.preventDefault();
 
         const inputValue = this._searchInput.value.trim();
 
-        if (inputValue) {
-            this.props.store.listPhotos(`/public/fotos/${inputValue}`);
-        }
+        if (inputValue)
+            this.props.store.dispatch(TimelineAPI.search(inputValue));
 
         this._searchInput.value = "";
     }
@@ -26,9 +40,10 @@ export default class Header extends Component {
                         type="text"
                         name="search"
                         placeholder="Search"
-                        className="header-busca-campo"
+                        className={`header-busca-campo ${this.state.errorMessage ? 'input-error' : ''}`}
                         ref={input => this._searchInput = input}/>
                     <input type="submit" value="Buscar" className="header-busca-submit"/>
+                <span>{this.state.errorMessage}</span>
                 </form>
 
 
