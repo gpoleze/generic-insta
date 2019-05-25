@@ -1,31 +1,18 @@
 import React, {Component} from 'react';
 import TimelineAPI from "./logic/TimelineAPI";
+import {connect} from "react-redux";
 
-export default class Header extends Component {
-
-    constructor() {
-        super();
-        this.state = {errorMessage: ''};
-    }
-
-    componentDidMount() {
-        this.props.store.subscribe(() =>{
-            console.log(this.props.store.getState());
-            this.setState({errorMessage: this.props.store.getState().header});
-
-            this._searchInput.focus();
-        });
-    }
+class Header extends Component {
 
     _search(event) {
         event.preventDefault();
 
-        const inputValue = this._searchInput.value.trim();
+        const input = this._searchInput;
 
-        if (inputValue)
-            this.props.store.dispatch(TimelineAPI.search(inputValue));
+        if (input.value.trim())
+            this.props.search(input.value.trim());
 
-        this._searchInput.value = "";
+        input.value = "";
     }
 
     render() {
@@ -40,10 +27,10 @@ export default class Header extends Component {
                         type="text"
                         name="search"
                         placeholder="Search"
-                        className={`header-busca-campo ${this.state.errorMessage ? 'input-error' : ''}`}
+                        className={`header-busca-campo ${this.props.errorMessage ? 'input-error' : ''}`}
                         ref={input => this._searchInput = input}/>
                     <input type="submit" value="Buscar" className="header-busca-submit"/>
-                <span>{this.state.errorMessage}</span>
+                <span>{this.props.errorMessage}</span>
                 </form>
 
 
@@ -62,3 +49,16 @@ export default class Header extends Component {
         );
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        errorMessage: state.notification
+    }
+};
+const mapDispatchToProps = dispatch => {
+    return {
+        search: inputValue => dispatch(TimelineAPI.search(inputValue))
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(Header);
