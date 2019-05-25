@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
+import { CSSTransitionGroup } from 'react-transition-group'
 
 import PhotoItem from './photo-box/components/PhotoItem';
 import TimelineAPI from "./logic/TimelineAPI";
@@ -37,7 +37,7 @@ export default class Timeline extends Component {
     render() {
         return (
             <div className="fotos container">
-                <ReactCSSTransitionGroup
+                <CSSTransitionGroup
                     transitionName="timeline"
                     transitionEnterTimeout={500}
                     transitionLeaveTimeout={300}>
@@ -48,9 +48,10 @@ export default class Timeline extends Component {
                                 photo={photo}
                                 commentAction={(id, commentInput) => this.props.store.dispatch(TimelineAPI.comment(id, commentInput))}
                                 likeAction={id => this.props.store.dispatch(TimelineAPI.like(id))}
-                            />)
+                            />
+                        )
                     }
-                </ReactCSSTransitionGroup>
+                </CSSTransitionGroup>
             </div>
         );
     }

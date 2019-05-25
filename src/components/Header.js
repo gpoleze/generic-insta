@@ -10,7 +10,6 @@ export default class Header extends Component {
 
     componentDidMount() {
         this.props.store.subscribe(() =>{
-            console.log(this.props.store.getState());
             this.setState({errorMessage: this.props.store.getState().header});
 
             this._searchInput.focus();
