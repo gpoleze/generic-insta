@@ -9,6 +9,8 @@ import './css/login.css';
 import App from './App';
 import Login from "./components/Login";
 import Logout from "./components/Logout";
+import {Provider} from "react-redux";
+import {store} from "./stores/store";
 
 const navigateToTimeline = (nextState, replace) => {
 
@@ -22,11 +24,13 @@ const navigateToTimeline = (nextState, replace) => {
 };
 
 ReactDOM.render((
-    <BrowserRouter>
-        <Switch>
-            <Route exact path='/' component={Login}/>
-            <Route path='/timeline/:login?' render={navigateToTimeline}/>
-            <Route path='/logout' component={Logout}/>
-        </Switch>
-    </BrowserRouter>
+    <Provider store={store}>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path='/' component={Login}/>
+                <Route path='/timeline/:login?' render={navigateToTimeline}/>
+                <Route path='/logout' component={Logout}/>
+            </Switch>
+        </BrowserRouter>
+    </Provider>
 ), document.getElementById('root'));

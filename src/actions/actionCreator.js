@@ -13,6 +13,5 @@ export const commentAction = (id, comment) => {
 };
 
 export const alertAction = (msg) => {
-    console.log(msg);
     return {type: ActionType.ALERT, msg}
 };

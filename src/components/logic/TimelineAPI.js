@@ -76,12 +76,8 @@ export default class TimelineAPI {
                 .then(photos => photos.map(photo => new Photo(photo)))
                 .then(photos => {
                     const msg = !photos.length ? `User ${userLogin} not found` : '';
-                    console.log(photos);
-
                     dispatch(alertAction(msg));
-                    // dispatch(listAction(photos));
-
-
+                    dispatch(listAction(photos));
                     return photos
                 })
         };
