@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 
-const API = process.env.REACT_APP_WEBAPI_URL;
+const API = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_WEBAPI_URL : process.env.REACT_APP_WEBAPI_URL_DEV;
 
 const handleError = res => {
     if (res.ok)
