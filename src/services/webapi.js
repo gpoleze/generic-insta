@@ -1,7 +1,6 @@
-// const API = 'https://instalura-api.herokuapp.com/api';
 import jwt_decode from "jwt-decode";
 
-const API = 'http://localhost:8080/api';
+const API = process.env.REACT_APP_WEBAPI_URL;
 
 const handleError = res => {
     if (res.ok)
